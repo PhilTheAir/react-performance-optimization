@@ -1,17 +1,53 @@
-import React, { Component } from 'react';
+import React, { Component, PureComponent } from 'react';
 
-class Mic extends Component {
-  shouldComponentUpdate() {
-    return false;
-  }
+class ListOfWords extends PureComponent {
+
+  // PureComponent does shallow comparison 
+  // between this.props & nextProps and this.state & nextState
+
   render() {
-    return (
-      <svg className="icon-svg icon-mic" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" aria-labelledby="title">
-        <title>mic</title>
-        <path className="path1" d="M15 22c2.761 0 5-2.239 5-5v-12c0-2.761-2.239-5-5-5s-5 2.239-5 5v12c0 2.761 2.239 5 5 5zM22 14v3c0 3.866-3.134 7-7 7s-7-3.134-7-7v-3h-2v3c0 4.632 3.5 8.447 8 8.944v4.056h-4v2h10v-2h-4v-4.056c4.5-0.497 8-4.312 8-8.944v-3h-2z"></path>
-      </svg>
-    )
+    return <div>{this.props.words.join(',')}</div>;
   }
 }
 
-export default Mic;
+// Or use stateless functional component:
+// 
+// const ListOfWords = ({ words }) => (
+//   <div>{words.join(',')}</div>
+// )
+
+class WordAdder extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      words: ['marklar']
+    };
+  }
+
+  // shouldComponentUpdate(nextProps, nextState) {
+  //   deep comparison happens here
+  //   // if (this.props.color !== nextProps.color) return true;
+  //   // if (this.state.count !== nextState.count) return true;
+  //   return false;
+  // }
+
+  handleClick = () => {
+    const words = this.state.words;
+    // avoid shallowEqual to be true so use spread operator
+    // to create a new array rather than Array.push()
+    this.setState(prevState => ({
+      words: [...prevState.words, ...words],
+    }));  
+  }
+
+  render() {
+    return (
+      <div>
+        <button onClick={this.handleClick} />
+        <ListOfWords words={this.state.words} />
+      </div>
+    );
+  }
+}
+
+export default WordAdder;
